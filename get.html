@@ -9,11 +9,17 @@
        CONFIG — edit these two lines only
        ============================================================ -->
   <script>
-    // Android: Play Store listing (package name)
-    var ANDROID_URL = "https://play.google.com/store/apps/details?id=com.clickchat.android";
-    // iOS: App Store listing.
+    var ANDROID_ID  = "com.clickchat.android";
     var IOS_APP_ID  = "6775589600";
+
+    // https:// URLs — used for the visible buttons (work everywhere incl. desktop).
+    var ANDROID_URL = "https://play.google.com/store/apps/details?id=" + ANDROID_ID;
     var IOS_URL     = "https://apps.apple.com/app/id" + IOS_APP_ID;
+
+    // Native store-app schemes — used for the mobile auto-redirect so the
+    // phone opens the Play Store / App Store app directly instead of the web store.
+    var ANDROID_APP = "market://details?id=" + ANDROID_ID;
+    var IOS_APP     = "itms-apps://apps.apple.com/app/id" + IOS_APP_ID;
   </script>
 
   <style>
@@ -58,14 +64,18 @@
                       (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); // iPadOS
       var isAndroid = /android/i.test(ua);
 
+      // Visible buttons always use https:// (safe on every platform).
       document.getElementById("ios").href     = IOS_URL;
       document.getElementById("android").href = ANDROID_URL;
 
-      // Auto-redirect on mobile; desktop shows both buttons.
+      // Auto-redirect on mobile straight into the native store app; desktop shows buttons.
       if (isAndroid) {
-        window.location.replace(ANDROID_URL);
+        window.location.replace(ANDROID_APP);
+        // Fallback to web Play Store if the native app didn't intercept.
+        setTimeout(function () { window.location.href = ANDROID_URL; }, 1200);
       } else if (isIOS) {
-        window.location.replace(IOS_URL);
+        window.location.replace(IOS_APP);
+        setTimeout(function () { window.location.href = IOS_URL; }, 1200);
       }
     })();
   </script>

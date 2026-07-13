@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Get ClickChat</title>
+  <title>ClickChat - קליקצ'אט</title>
 
   <!-- ============================================================
-       CONFIG — edit these two lines only
+       CONFIG — edit these values only
        ============================================================ -->
   <script>
     var ANDROID_ID  = "com.clickchat.android";
@@ -18,44 +18,97 @@
 
     // Native store-app schemes — used for the mobile auto-redirect so the
     // phone opens the Play Store / App Store app directly instead of the web store.
-    var ANDROID_APP = "market://details?id=" + ANDROID_ID;
+    var ANDROID_APP = "intent://details?id=" + ANDROID_ID +
+                      "#Intent;scheme=market;package=com.android.vending;" +
+                      "S.browser_fallback_url=" + encodeURIComponent(ANDROID_URL) + ";end";
     var IOS_APP     = "itms-apps://apps.apple.com/app/id" + IOS_APP_ID;
   </script>
 
   <style>
-    :root { color-scheme: light dark; }
-    * { box-sizing: border-box; }
+    /* ClickChat brand: deep purple #673AB7 on white */
+    :root {
+      --brand: #673AB7;
+      --brand-dark: #512DA8;
+      --brand-soft: #F3EDF7;
+      --ink: #1c1235;
+      --muted: #6b6580;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      margin: 0; min-height: 100vh;
+      min-height: 100vh;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #0f1226; color: #fff; text-align: center; padding: 24px;
+      font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink); text-align: center; padding: 32px 24px;
+      background: #ffffff;
+      overflow: hidden; position: relative;
     }
-    h1 { font-size: 1.6rem; margin: 16px 0 4px; }
-    p  { opacity: .8; margin: 0 0 28px; }
-    .logo { width: 96px; height: 96px; border-radius: 22px; box-shadow: 0 8px 30px rgba(0,0,0,.4); }
-    .btns { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; }
+
+    /* soft purple glow accents on the white bg */
+    body::before, body::after {
+      content: ""; position: fixed; border-radius: 50%; filter: blur(90px); opacity: .18; z-index: 0;
+    }
+    body::before { width: 340px; height: 340px; background: var(--brand); top: -100px; inset-inline-start: -80px; }
+    body::after  { width: 300px; height: 300px; background: #9b7fdd; bottom: -80px; inset-inline-end: -70px; }
+
+    .card {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 360px;
+      display: flex; flex-direction: column; align-items: center;
+      animation: rise .6s ease both;
+    }
+    @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+    .logo {
+      width: 108px; height: 108px; border-radius: 26px;
+      box-shadow: 0 14px 40px rgba(103,58,183,.28);
+      background: var(--brand-soft);
+    }
+
+    h1 { font-size: 2rem; font-weight: 800; margin-top: 22px; letter-spacing: -.5px; color: var(--brand); }
+    .tagline { font-size: 1.05rem; color: var(--ink); opacity: .8; margin-top: 8px; line-height: 1.55; }
+    .subtitle { font-size: .9rem; color: var(--muted); margin-top: 18px; }
+
+    .btns { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 28px; }
     a.btn {
-      display: block; padding: 15px 20px; border-radius: 14px;
-      text-decoration: none; font-weight: 600; font-size: 1rem;
-      background: #4f6bff; color: #fff; transition: transform .1s ease, opacity .2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 16px 20px; border-radius: 16px;
+      text-decoration: none; font-weight: 700; font-size: 1.02rem;
+      transition: transform .12s ease, box-shadow .2s ease;
     }
-    a.btn.secondary { background: rgba(255,255,255,.12); }
+    a.btn.ios {
+      background: linear-gradient(135deg, var(--brand), var(--brand-dark)); color: #fff;
+      box-shadow: 0 10px 26px rgba(103,58,183,.38);
+    }
+    a.btn.android {
+      background: #fff; color: var(--brand); border: 2px solid var(--brand);
+    }
     a.btn:active { transform: scale(.97); }
-    .note { margin-top: 22px; font-size: .8rem; opacity: .55; }
+    a.btn svg { width: 22px; height: 22px; fill: currentColor; }
+
+    .note { margin-top: 24px; font-size: .8rem; color: var(--muted); opacity: .8; }
   </style>
 </head>
 <body>
-  <img class="logo" src="AppLogo.png" alt="ClickChat" onerror="this.style.display='none'">
-  <h1>ClickChat</h1>
-  <p>Opening your app store…</p>
+  <div class="card">
+    <img class="logo" src="AppLogo.png" alt="ClickChat" onerror="this.style.display='none'">
+    <h1>קליקצ'אט</h1>
+    <p class="tagline">צ'אט אקראי, חברים חדשים והכרויות —<br>הכול במקום אחד.</p>
+    <p class="subtitle">פותח את החנות שלך…</p>
 
-  <div class="btns">
-    <a id="ios"     class="btn" href="#">Download on the App Store</a>
-    <a id="android" class="btn secondary" href="#">Get it on Google Play</a>
+    <div class="btns">
+      <a id="ios" class="btn ios" href="#">
+        <svg viewBox="0 0 24 24"><path d="M16.4 1.4c.1 1-.3 2-1 2.8-.7.8-1.8 1.4-2.8 1.3-.1-1 .4-2 1-2.7.7-.8 1.9-1.4 2.8-1.4zM20 17.2c-.5 1.2-.8 1.7-1.4 2.7-.9 1.4-2.2 3.1-3.8 3.1-1.4 0-1.8-.9-3.7-.9s-2.3.9-3.7.9c-1.6 0-2.8-1.5-3.7-2.9C.8 17.3.4 12.9 2 10.1c.9-1.5 2.5-2.4 4-2.4 1.5 0 2.5 1 3.7 1 1.2 0 1.9-1 3.7-1 1.3 0 2.7.7 3.7 2-3.2 1.8-2.7 6.4.2 7.5z"/></svg>
+        הורדה מ‑App Store
+      </a>
+      <a id="android" class="btn android" href="#">
+        <svg viewBox="0 0 24 24"><path d="M3.6 20.5 12 12l8.4 8.5c-.2.9-1 1.5-2 1.5H5.6c-1 0-1.8-.6-2-1.5zM3 3.9 11 12l-8 8.1c-.3-.3-.5-.7-.5-1.2V5.1c0-.5.2-.9.5-1.2zm9.6 6.9L4.4 2.6c.2-.1.4-.1.6-.1h13c.2 0 .4 0 .6.1l-8.2 8.2zm1.4 1.2 3.2-3.2 3.3 1.9c.6.4.9 1 .8 1.6-.1.5-.4 1-.9 1.3l-3.2 1.8-3.2-3.2z"/></svg>
+        הורדה מ‑Google Play
+      </a>
+    </div>
+
+    <p class="note">אם דבר לא קורה, הקישו על הכפתור המתאים למכשיר שלכם.</p>
   </div>
-
-  <p class="note">If nothing happens, tap the button for your device.</p>
 
   <script>
     (function () {
@@ -70,11 +123,11 @@
 
       // Auto-redirect on mobile straight into the native store app; desktop shows buttons.
       if (isAndroid) {
+        // intent:// carries its own S.browser_fallback_url, so no JS timer needed.
         window.location.replace(ANDROID_APP);
-        // Fallback to web Play Store if the native app didn't intercept.
-        setTimeout(function () { window.location.href = ANDROID_URL; }, 1200);
       } else if (isIOS) {
         window.location.replace(IOS_APP);
+        // Fallback to web App Store if the native scheme was blocked (e.g. in-app browser).
         setTimeout(function () { window.location.href = IOS_URL; }, 1200);
       }
     })();

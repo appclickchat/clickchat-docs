@@ -22,6 +22,12 @@
                       "#Intent;scheme=market;package=com.android.vending;" +
                       "S.browser_fallback_url=" + encodeURIComponent(ANDROID_URL) + ";end";
     var IOS_APP     = "itms-apps://apps.apple.com/app/id" + IOS_APP_ID;
+
+    // ---- Analytics (GoatCounter, free) ----------------------------------
+    // 1. Sign up at https://www.goatcounter.com and pick a code (e.g. "clickchat").
+    // 2. Put that code here. Leave "" to disable tracking.
+    // Your dashboard will live at https://<CODE>.goatcounter.com
+    var GOATCOUNTER_CODE = "clickchat";  // <-- e.g. "clickchat"
   </script>
 
   <style>
@@ -120,6 +126,28 @@
       // Visible buttons always use https:// (safe on every platform).
       document.getElementById("ios").href     = IOS_URL;
       document.getElementById("android").href = ANDROID_URL;
+
+      // ---- Track the visit BEFORE redirecting -----------------------------
+      // The mobile redirect fires almost instantly, so a normal analytics
+      // <script> often never loads. Instead we fire a GoatCounter "pixel"
+      // beacon synchronously and record the traffic source + platform in the
+      // path, e.g.  /get?src=tiktok&plat=ios  — so you can segment sources.
+      function getParam(name) {
+        var m = new RegExp("[?&]" + name + "=([^&]+)").exec(window.location.search);
+        return m ? decodeURIComponent(m[1]) : "";
+      }
+      if (GOATCOUNTER_CODE) {
+        var src  = getParam("utm_source") || "direct";
+        var plat = isIOS ? "ios" : (isAndroid ? "android" : "other");
+        var path = "/get?src=" + encodeURIComponent(src) + "&plat=" + plat;
+        // Synchronous image request — reliably sent even as we navigate away.
+        var px = new Image();
+        px.src = "https://" + GOATCOUNTER_CODE + ".goatcounter.com/count" +
+                 "?p=" + encodeURIComponent(path) +
+                 "&t=" + encodeURIComponent(document.title) +
+                 "&r=" + encodeURIComponent(document.referrer) +
+                 "&rnd=" + String(Math.round(performance.now())); // cache-buster (no Date.now needed)
+      }
 
       // Auto-redirect on mobile straight into the native store app; desktop shows buttons.
       if (isAndroid) {

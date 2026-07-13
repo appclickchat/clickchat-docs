@@ -154,9 +154,10 @@
         // intent:// carries its own S.browser_fallback_url, so no JS timer needed.
         window.location.replace(ANDROID_APP);
       } else if (isIOS) {
-        window.location.replace(IOS_APP);
-        // Fallback to web App Store if the native scheme was blocked (e.g. in-app browser).
-        setTimeout(function () { window.location.href = IOS_URL; }, 1200);
+        // Use plain https:// on iOS: Apple auto-opens the App Store app from it,
+        // and unlike itms-apps:// it is NOT blocked inside sandboxed in-app
+        // browsers (e.g. TikTok), so the redirect fires without a tap.
+        window.location.replace(IOS_URL);
       }
     })();
   </script>
